@@ -5,7 +5,7 @@ Este repositorio contiene el material técnico para la construcción de un **rob
 
 > **Nota:** Este proyecto es una **adaptación del Otto Ninja XL original**. Las diferencias principales respecto a la versión de boryspimpek se detallan en la sección [*Diferencias respecto al diseño original*](#-diferencias-respecto-al-diseño-original).
 
----
+> ⚠️ **Advertencia:** El **modo caminar** aún no está disponible. Por el momento solo se encuentra operativo el **modo rodar**.
 
 # Objetivo del Proyecto
 
@@ -71,19 +71,28 @@ Esta versión es una **adaptación** del [Otto Ninja XL de boryspimpek](https://
   * [U8g2](https://github.com/olikraus/u8g2) `^2.36.18`
 * **Celular o computador** con WiFi y navegador web para el control
 
-### Interfaz de Control (página web)
+### Conexión e Interfaz de Control (página web)
 
-![Captura de la interfaz web de control](pag.png)
+1. **Conectarse a la red Wi-Fi `Otto_Ninja_XL`:**
+
+![Conexión a la red Wi-Fi Otto_Ninja_XL](1.png)
+*Selección de la red Wi-Fi `Otto_Ninja_XL` desde la configuración del teléfono.*
+
+2. **Ingresar la contraseña `12345678`:**
+
+![Ingreso de contraseña de la red Otto_Ninja_XL](2.png)
+*Contraseña predeterminada (`12345678`) de la red Wi-Fi servida por el robot.*
+
+3. **Ingresar a la IP `192.168.4.1` desde el navegador del celular:**
+
+![Captura de la interfaz web de control en 192.168.4.1](3.png)
 *Página web servida por el robot: botón de parada de emergencia, joystick táctil, modos de postura, acciones, expresiones y reproductor de melodías.*
 
-
 ---
-
 ### Circuito interior
-
 ![Circuito al interior del robot](circuito.png)
-
 ---
+
 # Conexiones Físicas
 
 > **IMPORTANTE:** realizar todo el cableado con las baterías desconectadas.

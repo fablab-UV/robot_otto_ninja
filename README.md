@@ -75,22 +75,22 @@ Esta versión es una **adaptación** del [Otto Ninja XL de boryspimpek](https://
 
 1. **Conectarse a la red Wi-Fi `Otto_Ninja_XL`:**
 
-![Conexión a la red Wi-Fi Otto_Ninja_XL](1.png)
+![Conexión a la red Wi-Fi Otto_Ninja_XL](1.jpeg)
 *Selección de la red Wi-Fi `Otto_Ninja_XL` desde la configuración del teléfono.*
 
 2. **Ingresar la contraseña `12345678`:**
 
-![Ingreso de contraseña de la red Otto_Ninja_XL](2.png)
+![Ingreso de contraseña de la red Otto_Ninja_XL](2.jpeg)
 *Contraseña predeterminada (`12345678`) de la red Wi-Fi servida por el robot.*
 
 3. **Ingresar a la IP `192.168.4.1` desde el navegador del celular:**
 
-![Captura de la interfaz web de control en 192.168.4.1](3.png)
+![Captura de la interfaz web de control en 192.168.4.1](3.jpeg)
 *Página web servida por el robot: botón de parada de emergencia, joystick táctil, modos de postura, acciones, expresiones y reproductor de melodías.*
 
 ---
 ### Circuito interior
-![Circuito al interior del robot](circuito.png)
+![Circuito al interior del robot](circuito.jpeg)
 ---
 
 # Conexiones Físicas

@@ -22,10 +22,8 @@ Desarrollar un robot lúdico y educativo de bajo costo capaz de:
 
 | Vista frontal | Vista lateral |
 | :---: | :---: |
-| ![Vista frontal del Otto Ninja XL en el FabLab UV](frontal.jpeg) | ![Vista lateral del Otto Ninja XL en el FabLab UV](lateral.jpeg) |
+| ![Vista frontal del Otto Ninja XL en el FabLab UV](frontal.jpeg) | ![Vista superior del Otto Ninja XL, por dentro, en el FabLab UV](arriba.jpeg) |
 | *Ojos OLED duales y carrocería impresa en 3D del modelo Remix.* | *Piernas con servos 180° y pies-rueda con servos 360°.* |
-
-*(Reemplazar con fotos del prototipo real.)*
 
 ---
 
@@ -40,6 +38,8 @@ Esta versión es una **adaptación** del [Otto Ninja XL de boryspimpek](https://
 | Pantallas | 1 OLED SH1106 | **2 OLED SSD1306 128×64** (un ojo en cada pantalla) |
 | Bus de las pantallas | I2C único | **I2C por hardware** (ojo izquierdo, pines 21/22) + **I2C por software** (ojo derecho, pines 16/17) |
 | Pinout de servos | 12, 13, 14, 27 | **4, 13, 18, 27** (ver tabla de conexiones) |
+| Servos | Servos genéricos | **2× MG996R** (piernas, 180°) + **2× FS5103R** (ruedas, 360°) |
+| Alimentación | Fuente genérica | **2× baterías 18650 + LM2596** a 5 V, con condensadores de filtro (470 µF + 2× 220 µF) |
 | Firmware | Librerías `PS4Controller` + `DFRobotDFPlayerMini` | Firmware propio con **servidor web embebido**, joystick continuo con watchdog y expresiones aleatorias en reposo |
 
 * El cambio a **control web** elimina la necesidad de un mando PS4: cualquier celular o computador con WiFi puede manejar el robot sin instalar nada.
@@ -53,12 +53,14 @@ Esta versión es una **adaptación** del [Otto Ninja XL de boryspimpek](https://
 ## Hardware
 
 * **Microcontrolador:** ESP32 DevKit (ESP32-WROOM-32)
-* **Servos de pierna:** 2× servo 180° tipo SG90 *(confirmar modelo exacto)*
-* **Servos de pie/rueda:** 2× servo de rotación continua 360° tipo SG90 *(confirmar modelo exacto)*
-* **Pantallas:** 2× OLED SSD1306 128×64 I2C (0.96")
-* **Sonido:** 1× buzzer pasivo *(confirmar tipo)*
+* **Servos de pierna:** 2× servo 180° **MG996R** (piñonería metálica, 4.8–7.2 V)
+* **Servos de pie/rueda:** 2× servo de rotación continua 360° **Feetech FS5103R**
+* **Pantallas:** 2× OLED SSD1306 128×64 I2C (0.96", alimentadas a 3.3 V desde el ESP32)
+* **Sonido:** 1× buzzer pasivo
+* **Conversor DC-DC:** 1× step-down **LM2596** con salida ajustada a 5 V
+* **Baterías:** 2× Samsung ICR18650 en serie (7.4 V nominal) con portabaterías y conector jack
+* **Condensadores de filtro:** 1× electrolítico 470 µF + 2× electrolítico 220 µF en el riel de 5 V
 * **Estructura:** Piezas impresas en 3D del modelo [Otto Ninja XL Remix Version](https://www.printables.com/model/1250758-otto-ninja-xl-remix-version) (STL en `HARDWARE/`)
-* **Alimentación:** *(confirmar: power bank por USB / batería 18650 con regulador 5 V / pack de pilas)* — los 4 servos requieren 5 V con corriente suficiente (≥ 2 A recomendado)
 * Cables dupont, tornillería de los servos y cinta/velcro para fijar la electrónica
 
 ## Software
@@ -71,17 +73,21 @@ Esta versión es una **adaptación** del [Otto Ninja XL de boryspimpek](https://
 
 ### Interfaz de Control (página web)
 
-![Captura de la interfaz web de control](control.png)
+![Captura de la interfaz web de control](pag.png)
 *Página web servida por el robot: botón de parada de emergencia, joystick táctil, modos de postura, acciones, expresiones y reproductor de melodías.*
 
-*(Reemplazar con captura real de la página.)*
 
 ---
 
+### Circuito interior
+
+![Circuito al interior del robot](circuito.png)
+
+---
 # Conexiones Físicas
 
-> **IMPORTANTE:** realizar todo el cableado con la alimentación apagada.
-> Los 4 servos consumen picos de corriente que el regulador del ESP32 **no puede entregar**: alimentar los servos desde una fuente de 5 V externa (o el pin VIN/5 V solo si la fuente lo permite) y unir **GND común** con el ESP32.
+> **IMPORTANTE:** realizar todo el cableado con las baterías desconectadas.
+> Los 4 servos se alimentan desde la salida de 5 V del **LM2596**, nunca desde el pin 3V3 del ESP32 (ese riel es solo para las pantallas). Toda la electrónica comparte tierra común a través del OUT− del LM2596.
 
 ## Tabla de conexiones
 
@@ -112,14 +118,24 @@ Esta versión es una **adaptación** del [Otto Ninja XL de boryspimpek](https://
 
 ### Alimentación
 
-| Parámetro | Valor |
-|---|---|
-| Lógica ESP32 | 5 V por USB / VIN |
-| Servos | 5 V, ≥ 2 A (fuente externa recomendada) |
-| Tierra común | **Obligatoria:** GND de la fuente de servos unido al GND del ESP32 |
+El robot se alimenta de un pack de **2× baterías Samsung ICR18650 en serie** (7.4 V nominal, 8.4 V a carga completa). El pack entra por un **jack** al conversor step-down **LM2596**, cuya salida de 5 V alimenta los 4 servos y el ESP32:
 
-* **No** alimentar los 4 servos desde el pin 3V3 del ESP32.
-* Si los servos se alimentan del pin 5V/VIN del ESP32, verificar que la fuente aguante los picos de corriente (un servo trabado puede reiniciar la placa).
+| Etapa | Conexión |
+|---|---|
+| Portabaterías (2× 18650 en serie) | Jack → **IN+ / IN−** del LM2596 |
+| Salida del LM2596 (**OUT+ / OUT−**) | Riel de **5 V** → positivos y negativos de los 4 servos, y 5V/VIN + GND del ESP32 |
+| Pantallas OLED 0.96" | **3V3** y GND del ESP32 |
+| Buzzer pasivo | **D25** (señal) y GND del ESP32 |
+
+> **IMPORTANTE:** ajustar el LM2596 **antes** de conectar la electrónica. Medir OUT+ / OUT− con un multímetro y girar el potenciómetro hasta leer **5.0 V**.
+
+#### Condensadores de filtro (riel de 5 V)
+
+Para absorber los picos de corriente de los servos, el riel de 5 V (salida del LM2596) lleva **tres condensadores electrolíticos**: **1× 470 µF + 2× 220 µF**, cada uno conectado entre el positivo y el negativo del riel que alimenta los servos y el ESP32.
+
+* **Ojo con la polaridad:** pata larga (+) al positivo del riel, pata corta (−, lado de la franja) al negativo. Al revés se hinchan y pueden explotar.
+* **No** alimentar los servos desde el pin 3V3 del ESP32 (ese es solo para las pantallas).
+* Un MG996R trabado puede consumir ~2.5 A; si el robot se reinicia al moverse, revisar la carga de las baterías, el ajuste del LM2596 y la firmeza de las conexiones.
 
 ---
 
@@ -250,3 +266,4 @@ ESP32 (servidor web en :80)
 # Créditos
 
 Adaptación desarrollada por **[Maria-Ignacia Rojas](https://github.com/MariaIgnaciaR)**, estudiante de pregrado de Ingeniería Civil Biomédica, generación 2021. Ayudante de FabLab UV.
+
